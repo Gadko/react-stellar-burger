@@ -3,8 +3,16 @@
     flex-direction: column; 
     gap:18px;
 
-    max-height: 696px;
+    max-height: 464px;
     overflow-y: scroll;
+}
+
+.container__conetnt {
+    display: flex;
+    flex-direction: column; 
+    gap:18px;
+
+    max-height: 696px;
 }
 
 .content {

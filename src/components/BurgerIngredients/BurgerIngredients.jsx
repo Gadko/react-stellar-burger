@@ -1,8 +1,8 @@
-import React from 'react';
+
+import PropTypes from "prop-types";
 import data from '../../utils/data';
 import styles from './BurgerIngredients.module.css';
 import IngredientItem from '../IngredientItem/IngredientItem';
-import { Counter } from '@ya.praktikum/react-developer-burger-ui-components';
 
 const BunIngredients = (props) => {
     const buns = [];
@@ -86,5 +86,10 @@ function BurgerIngredients(props) {
         </>
     )
 }
+
+BurgerIngredients.propTypes = {
+    addIngredient: PropTypes.func.isRequired,
+    ingredients: PropTypes.instanceOf(Map).isRequired,
+  };
 
 export default BurgerIngredients;

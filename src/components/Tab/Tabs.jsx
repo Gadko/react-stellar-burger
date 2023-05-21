@@ -4,16 +4,16 @@ import { Tab } from '@ya.praktikum/react-developer-burger-ui-components'
 
 
 function Tabs() {
-  const [current, setCurrent] = React.useState('one')
+  const [current, setCurrent] = React.useState('Bun')
   return (
     <div style={{ display: 'flex' }}>
-      <Tab value="one" active={current === 'one'} onClick={() => setCurrent('one')}>
+      <Tab value="Bun" active={current === 'Bun'} onClick={() => setCurrent('Bun')}>
       Булки 
       </Tab>
-      <Tab value="two" active={current === 'two'} onClick={() => setCurrent('two')}>
+      <Tab value="Sous" active={current === 'Sous'} onClick={() => setCurrent('Sous')}>
       Соусы
       </Tab>
-      <Tab value="three" active={current === 'three'} onClick={() => setCurrent('three')}>
+      <Tab value="Main" active={current === 'Main'} onClick={() => setCurrent('Main')}>
       Начинки
       </Tab>
     </div>

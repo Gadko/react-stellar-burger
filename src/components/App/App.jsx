@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import styles from "./App.module.css";
 import React, { useState } from 'react';
 import AppHeader from '../Header/AppHeader'
@@ -33,7 +34,7 @@ function App() {
     setIngredients(newmap)
   }
 
-  const [modalActive, setModelActive] = useState(true);
+  const [modalActive, setModelActive] = useState(false);
 
 
   return (
@@ -55,5 +56,14 @@ function App() {
     </div>
   );
 }
+
+App.propTypes = {
+  addIngredient: PropTypes.func, 
+  removeIngredient: PropTypes.func, 
+  ingredients:PropTypes.object, 
+  modalActive: PropTypes.bool, 
+  setModelActive: PropTypes.func 
+};
+
 
 export default App;

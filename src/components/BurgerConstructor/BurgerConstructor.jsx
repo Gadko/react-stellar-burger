@@ -1,11 +1,10 @@
-import React from "react";
+import PropTypes from "prop-types";
 import data from "../../utils/data";
 import styles from "./BurgerConstructor.module.css";
 import { ConstructorElement } from "@ya.praktikum/react-developer-burger-ui-components";
 import { DragIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
-import IngredientItem from "../IngredientItem/IngredientItem";
 
 function BurgerTop(props) {
   for (let i = 0; i < data.data.length; i++) {
@@ -35,6 +34,11 @@ function BurgerTop(props) {
   return <div></div>;
 }
 
+BurgerTop.propTypes = {
+  ingredients: PropTypes.instanceOf(Map).isRequired,
+  removeIngredient: PropTypes.func.isRequired
+};
+
 function BurgerBottom(props) {
   for (let i = 0; i < data.data.length; i++) {
     if (
@@ -62,6 +66,11 @@ function BurgerBottom(props) {
   }
   return <div></div>;
 }
+
+BurgerBottom.propTypes = {
+  ingredients: PropTypes.instanceOf(Map).isRequired,
+  removeIngredient: PropTypes.func.isRequired,
+};
 
 function BurgerMain(props) {
   const buns = [];
@@ -91,6 +100,11 @@ function BurgerMain(props) {
   return buns.length > 0 ? buns : null;
 }
 
+BurgerMain.propTypes = {
+  ingredients: PropTypes.instanceOf(Map).isRequired,
+  removeIngredient: PropTypes.func.isRequired,
+};
+
 function Sum(props) {
   let sum = 0;
   for (let i = 0; i < data.data.length; i++) {
@@ -101,18 +115,24 @@ function Sum(props) {
   return sum;
 }
 
+Sum.propTypes = {
+  ingredients: PropTypes.instanceOf(Map).isRequired,
+};
+
 function BurgerConstructor(props) {
   return (
     <>
-      <div className={`${styles.container} custom-scroll`}>
+      <div className={`${styles.container__conetnt}`}>
         <BurgerTop
           removeIngredient={props.removeIngredient}
           ingredients={props.ingredients}
         />
-        <BurgerMain
-          removeIngredient={props.removeIngredient}
-          ingredients={props.ingredients}
-        />
+        <div className={`${styles.container} custom-scroll`}>
+          <BurgerMain
+            removeIngredient={props.removeIngredient}
+            ingredients={props.ingredients}
+          />
+        </div>
         <BurgerBottom
           removeIngredient={props.removeIngredient}
           ingredients={props.ingredients}
@@ -130,5 +150,11 @@ function BurgerConstructor(props) {
     </>
   );
 }
+
+BurgerConstructor.propTypes = {
+  setActive: PropTypes.func.isRequired,
+  ingredients: PropTypes.instanceOf(Map).isRequired,
+  removeIngredient: PropTypes.func.isRequired,
+};
 
 export default BurgerConstructor;

@@ -1,9 +1,7 @@
-import React from "react";
-import data from "../../utils/data";
+
+import PropTypes from "prop-types";
 import styles from "./ModalOrder.module.css";
 import done from '../../images/done.png'
-import IngredientItem from "../IngredientItem/IngredientItem";
-import { Counter } from "@ya.praktikum/react-developer-burger-ui-components";
 
 function ModalOrder({active, setActive}) {
   return (
@@ -23,5 +21,10 @@ function ModalOrder({active, setActive}) {
     </>
   );
 }
+
+ModalOrder.propTypes = {
+  active: PropTypes.bool.isRequired,
+  setActive: PropTypes.func.isRequired,
+};
 
 export default ModalOrder;
