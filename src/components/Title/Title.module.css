@@ -1,0 +1,17 @@
+.title {
+    margin: 0;
+    margin-top: 40px;
+    margin-bottom: 20px;
+
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    color: #F2F2F3;
+
+}

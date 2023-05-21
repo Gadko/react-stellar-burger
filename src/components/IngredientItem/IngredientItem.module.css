@@ -1,0 +1,44 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    position: relative;
+}
+
+.img {
+    width: 240px;
+    height: 120px;
+}
+
+.price {
+    margin: 0;
+    margin-right: 9px;
+
+    font-family: 'Iceland';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 24px;
+
+    text-align: center;
+
+    color: #F2F2F3;
+}
+
+.name {
+    margin: 0;
+    margin-top: 8px;
+
+    width: 272px;
+
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+
+    text-align: center;
+
+    color: #F2F2F3;
+}

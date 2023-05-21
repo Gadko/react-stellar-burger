@@ -1,0 +1,47 @@
+.container {
+    display: flex;
+    flex-direction: column; 
+    gap:18px;
+
+    max-height: 696px;
+    overflow-y: scroll;
+}
+
+.content {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-left: 20px;
+}
+.block {
+    width: 24px;
+}
+
+.price {
+    justify-content: flex-end;
+    display: flex;
+    gap: 40px;
+    padding: 20px 40px 0 0;
+}
+
+.price_content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.price_sum {
+    margin: 0;
+
+    font-family: 'Iceland';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 36px;
+
+    display: flex;
+    align-items: center;
+    text-align: right;
+
+    color: #F2F2F3;
+}
