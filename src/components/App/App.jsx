@@ -57,13 +57,4 @@ function App() {
   );
 }
 
-App.propTypes = {
-  addIngredient: PropTypes.func, 
-  removeIngredient: PropTypes.func, 
-  ingredients:PropTypes.object, 
-  modalActive: PropTypes.bool, 
-  setModelActive: PropTypes.func 
-};
-
-
 export default App;
