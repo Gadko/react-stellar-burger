@@ -1,115 +1,64 @@
 import PropTypes from "prop-types";
-import data from "../../utils/data";
 import styles from "./BurgerConstructor.module.css";
 import { ConstructorElement } from "@ya.praktikum/react-developer-burger-ui-components";
-import { DragIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
+import { Button, DragIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 
-function BurgerTop(props) {
-  for (let i = 0; i < data.data.length; i++) {
+function BurgerPart(props) {
+  const mas = [];
+  for (let i = 0; i < props.data.length; i++) {
     if (
-      data.data[i].type === "bun" &&
-      props.ingredients.get(data.data[i]._id) !== undefined &&
-      props.ingredients.get(data.data[i]._id) > 0
+      props.part.type.includes(props.data[i].type) &&
+      props.ingredients.get(props.data[i]._id) !== undefined &&
+      props.ingredients.get(props.data[i]._id) > 0
     ) {
-      return (
-        <div className={styles.content}>
-          <div className={styles.block}></div>
-          <ConstructorElement
-            key="top"
-            type="top"
-            isLocked={true}
-            text={data.data[i].name + " (верх)"}
-            price={data.data[i].price}
-            thumbnail={data.data[i].image}
-            handleClose={() => {
-              props.removeIngredient(data.data[i]._id);
-            }}
-          />
-        </div>
-      );
-    }
-  }
-  return <div></div>;
-}
-
-BurgerTop.propTypes = {
-  ingredients: PropTypes.instanceOf(Map).isRequired,
-  removeIngredient: PropTypes.func.isRequired
-};
-
-function BurgerBottom(props) {
-  for (let i = 0; i < data.data.length; i++) {
-    if (
-      data.data[i].type === "bun" &&
-      props.ingredients.get(data.data[i]._id) !== undefined &&
-      props.ingredients.get(data.data[i]._id) > 0
-    ) {
-      return (
-        <div className={styles.content}>
-          <div className={styles.block}></div>
-          <ConstructorElement
-            key="bottom"
-            type="bottom"
-            isLocked={true}
-            text={data.data[i].name + " (низ)"}
-            price={data.data[i].price}
-            thumbnail={data.data[i].image}
-            handleClose={() => {
-              props.removeIngredient(data.data[i]._id);
-            }}
-          />
-        </div>
-      );
-    }
-  }
-  return <div></div>;
-}
-
-BurgerBottom.propTypes = {
-  ingredients: PropTypes.instanceOf(Map).isRequired,
-  removeIngredient: PropTypes.func.isRequired,
-};
-
-function BurgerMain(props) {
-  const buns = [];
-  for (let i = 0; i < data.data.length; i++) {
-    if (
-      data.data[i].type !== "bun" &&
-      props.ingredients.get(data.data[i]._id) !== undefined &&
-      props.ingredients.get(data.data[i]._id) > 0
-    ) {
-      for (let r = 0; r < props.ingredients.get(data.data[i]._id); r++) {
-        buns.push(
-          <div key={data.data[i]._id + r} className={styles.content}>
-            <DragIcon type="primary" />
-            <ConstructorElement
-              text={data.data[i].name}
-              price={data.data[i].price}
-              thumbnail={data.data[i].image}
-              handleClose={() => {
-                props.removeIngredient(data.data[i]._id);
-              }}
-            />
+      for (
+        let j = 0;
+        j < props.ingredients.get(props.data[i]._id);
+        j++
+      ) {
+        const key=props.part.key+props.data[i]._id+j
+        mas.push(
+          <div key={key} className={styles.content}>
+            {props.part.type.includes('bun') ? <div key={key} className={styles.block}></div> : <DragIcon key={key} type="primary" />}
+            <button className={styles.button} onClick={() => {props.setActiveDetails(props.data[i]._id)}}>
+              <ConstructorElement
+                key={key}
+                type={props.part.key}
+                isLocked={props.part.isLocked}
+                text={props.data[i].name + props.part.appendix}
+                price={props.data[i].price}
+                thumbnail={props.data[i].image}
+                handleClose={() => {
+                  props.removeIngredient(props.data[i]._id);
+                }}
+              />
+            </button>
+            
           </div>
         );
+        if (props.part.onlyOne === true) {
+          return mas;
+        }
       }
     }
   }
-  return buns.length > 0 ? buns : null;
+  return mas;
 }
 
-BurgerMain.propTypes = {
+BurgerPart.propTypes = {
   ingredients: PropTypes.instanceOf(Map).isRequired,
   removeIngredient: PropTypes.func.isRequired,
 };
 
 function Sum(props) {
+  if (props.data === undefined) {
+    return 0;
+  }
   let sum = 0;
-  for (let i = 0; i < data.data.length; i++) {
-    if (props.ingredients.get(data.data[i]._id) !== undefined) {
-      sum += data.data[i].price * props.ingredients.get(data.data[i]._id);
+  for (let i = 0; i < props.data.ingredients.length; i++) {
+    if (props.ingredients.get(props.data.ingredients[i]._id) !== undefined) {
+      sum += props.data.ingredients[i].price * props.ingredients.get(props.data.ingredients[i]._id);
     }
   }
   return sum;
@@ -123,19 +72,46 @@ function BurgerConstructor(props) {
   return (
     <>
       <div className={`${styles.container__conetnt}`}>
-        <BurgerTop
+        <BurgerPart
+          setActiveDetails={props.setActiveDetails}
+          data={props.data.ingredients}
           removeIngredient={props.removeIngredient}
           ingredients={props.ingredients}
+          part={{
+            type: ["bun"],
+            onlyOne: true,
+            key: "top",
+            isLocked: true,
+            appendix: " (верх)",
+          }}
         />
         <div className={`${styles.container} custom-scroll`}>
-          <BurgerMain
+          <BurgerPart
+            setActiveDetails={props.setActiveDetails}
+            data={props.data.ingredients}
             removeIngredient={props.removeIngredient}
             ingredients={props.ingredients}
+            part={{
+              type: ["main", "sauce"],
+              onlyOne: false,
+              key: "",
+              isLocked: false,
+              appendix: "",
+            }}
           />
         </div>
-        <BurgerBottom
+        <BurgerPart
+          setActiveDetails={props.setActiveDetails}
+          data={props.data.ingredients}
           removeIngredient={props.removeIngredient}
           ingredients={props.ingredients}
+          part={{
+            type: ["bun"],
+            onlyOne: true,
+            key: "bottom",
+            isLocked: true,
+            appendix: " (низ)",
+          }}
         />
       </div>
       <div className={styles.price}>
@@ -143,7 +119,15 @@ function BurgerConstructor(props) {
           <p className={styles.price_sum}>{Sum(props)}</p>
           <CurrencyIcon type="primary" />
         </div>
-        <Button onClick={() => {props.setActive(true)}} htmlType="button" type="primary" size="small" extraClass="ml-2">
+        <Button
+          onClick={() => {
+            props.setActive(true);
+          }}
+          htmlType="button"
+          type="primary"
+          size="small"
+          extraClass="ml-2"
+        >
           Оформить заказ
         </Button>
       </div>
