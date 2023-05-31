@@ -8,6 +8,8 @@ import BurgerIngredients from "../BurgerIngredients/BurgerIngredients";
 import BurgerConstructor from "../BurgerConstructor/BurgerConstructor";
 import OrderDetails from "../OrderDetails/OrderDetails";
 import IngredientDetails from "../IngredientDetails/IngredientDetails";
+import getIngredients from "../../utils/burger-api";
+import Modal from "../Modal/Modal";
 
 function App() {
   const [api, setApi] = useState({
@@ -15,36 +17,39 @@ function App() {
     ingredients: [],
   });
 
-  function getIngredients() {
-    fetch(`https://norma.nomoreparties.space/api/ingredients`)
-      .then((res) => res.json())
-      .then(
-        (res) => {
-          setApi({
-            error: null,
-            ingredients: res.data,
-          });
-        },
-        (error) => {
-          setApi({
-            error,
-          });
-        }
-      );
-  }
+  
 
   useEffect(() => {
-    getIngredients();
+    getIngredients()
+      .then(
+      (res) => {
+        let isBun = false;
+        res.data.forEach((e) => {
+          if (e.type === "bun" && isBun === false) {
+            e.count = 1;
+            isBun = true;
+          } else if (e.type === "bun") {
+            e.count = 0;
+          } else {
+            e.count = 1; //Это сделано для демонстрации работы BurgerConstructor. В будующем я это уберу.
+          }
+        });
+        setApi({
+          error: null,
+          ingredients: res.data,
+        });
+      },
+      (error) => {
+        setApi({
+          error,
+        });
+      }
+    );;
   }, []);
-
-  const [ingredients, setIngredients] = useState(new Map());
 
   function isBunSelected() {
     for (let i = 0; i < api.ingredients.length; i++) {
-      if (
-        api.ingredients[i].type === "bun" &&
-        ingredients.get(api.ingredients[i]._id) > 0
-      ) {
+      if (api.ingredients[i].type === "bun" && api.ingredients[i].count > 0) {
         return true;
       }
     }
@@ -52,6 +57,7 @@ function App() {
   }
 
   function addIngredient(_id) {
+    let index = 0;
     for (let i = 0; i < api.ingredients.length; i++) {
       if (
         api.ingredients[i]._id === _id &&
@@ -59,21 +65,63 @@ function App() {
         isBunSelected()
       ) {
         return;
+      } else if (api.ingredients[i]._id === _id) {
+        index = i;
+        break;
       }
     }
-    let newmap = new Map(ingredients);
+    let newmap = [...api.ingredients];
+    newmap[index].count += 1;
 
-    if (newmap.get(_id) === undefined) {
-      newmap.set(_id, 1);
-    } else {
-      newmap.set(_id, newmap.get(_id) + 1);
-    }
-    setIngredients(newmap);
+    setApi({ ...api, ingredients: newmap });
   }
+
+  function addIngredients(_ids) {
+    let indexes = [];
+    let isBuns = false;
+    let newmap = [...api.ingredients];
+    if (api.ingredients.length <= 0) {
+      return;
+    }
+    for (let i = 0; i < api.ingredients.length; i++) {
+      for (let j = 0; j < _ids.length; j++) {
+        if (
+          api.ingredients[i]._id === _ids[j] &&
+          api.ingredients[i].type === "bun" &&
+          (isBunSelected() || isBuns)
+        ) {
+          continue;
+        } else if (api.ingredients[i]._id === _ids[j]) {
+          if (api.ingredients[i].type === "bun") {
+            isBuns = true;
+          }
+          indexes.push(i);
+        }
+      }
+      indexes.forEach((e) => {
+        newmap[e].count += 1;
+      });
+    }
+    setApi({ ...api, ingredients: newmap });
+  }
+
   function removeIngredient(_id) {
-    let newmap = new Map(ingredients);
-    newmap.set(_id, newmap.get(_id) - 1);
-    setIngredients(newmap);
+    let index = 0;
+    let newmap = [...api.ingredients];
+
+    for (let i = 0; i < api.ingredients.length; i++) {
+      if (api.ingredients[i]._id === _id) {
+        index = i;
+        break;
+      }
+    }
+
+    if (newmap[index].count === 0) {
+      return;
+    }
+
+    newmap[index].count -= 1;
+    setApi({ ...api, ingredients: newmap });
   }
 
   const [modalOrderActive, setModelOrderActive] = useState(false);
@@ -90,7 +138,6 @@ function App() {
     }
   }
 
-
   return (
     <div className={styles.app}>
       <AppHeader />
@@ -100,29 +147,31 @@ function App() {
           <div style={{ width: "600px" }}>
             <Tab />
             <BurgerIngredients
-              data={api}
+              setActiveDetails={modalDetails}
+              data={api.ingredients}
               addIngredient={addIngredient}
-              ingredients={ingredients}
             />
           </div>
           <div style={{ width: "600px" }}>
             <BurgerConstructor
-              data={api}
-              setActiveDetails={modalDetails}
+              data={api.ingredients}
               setActive={setModelOrderActive}
               removeIngredient={removeIngredient}
-              ingredients={ingredients}
             />
           </div>
         </div>
       </div>
       <OrderDetails active={modalOrderActive} setActive={setModelOrderActive} />
-      <IngredientDetails
-        modalData={modalData}
-        data={api}
-        active={modalDetailsActive}
-        setActive={setModelDetailsActive}
-      />
+      
+      <Modal setActive={setModelDetailsActive} active={modalDetailsActive}>
+      
+        <IngredientDetails
+          modalData={modalData}
+          data={api.ingredients}
+          active={modalDetailsActive}
+        />
+        
+      </Modal>
     </div>
   );
 }

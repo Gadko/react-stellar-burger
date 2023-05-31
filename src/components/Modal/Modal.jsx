@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styles from "./Modal.module.css";
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom'
+import ModalOverlay from "../ModalOverlay/ModalOverlay";
 
 const modalRoot = document.getElementById("react-modals");
 
@@ -23,11 +24,11 @@ function Modal({active, setActive, children}) {
   return ReactDOM.createPortal((
     <>
       <div className={active ? styles.popup + " " + styles.active : styles.popup}>
-        <div className={styles.overlay} onClick={() => setActive(false)}></div>
           <div className={styles.container}>
             <button type="button" className={styles.close} onClick={() => setActive(false)}></button>
             {children}
           </div>
+          <ModalOverlay setActive={setActive} />
       </div>
     </>
   ), modalRoot);
