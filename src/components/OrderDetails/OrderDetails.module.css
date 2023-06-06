@@ -31,17 +31,19 @@
     height: 100vh;
     display: flex;
     width: 100%;
-    z-index: 1000;
     height: 100%;
     align-items: center;
     align-content: center;
     justify-content: center;
+
+    cursor: pointer;
+    z-index: 1;
 }
 
 .container {
     width: 720px;
 
-    position: relative;
+    position: absolute;
 
     box-sizing: border-box;
     border: 1px solid rgba(76, 76, 255, 0.2);
@@ -50,6 +52,8 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+
+    z-index: 2;
 }
 
 .close {

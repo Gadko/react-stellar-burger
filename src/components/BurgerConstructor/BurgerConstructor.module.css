@@ -53,3 +53,10 @@
 
     color: #F2F2F3;
 }
+
+.button {
+    background: transparent;
+    border: 0;
+    overflow: hidden;
+    flex-grow: 1;
+}

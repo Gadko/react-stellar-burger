@@ -1,0 +1,32 @@
+.title {
+    width: 540px;
+    height: 64px;
+    margin-top: 50px;
+    flex-grow: 1;
+    text-align: start;
+}
+
+.subtitle {
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.nutrition {
+    margin-top: 8px;
+}
+
+.img {
+    height: 240px;
+    width: 480px;
+}
+
+.content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 60px;
+}
+
+.container {
+    width: 120px;
+    text-align: center;
+}

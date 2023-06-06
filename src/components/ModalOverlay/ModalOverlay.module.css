@@ -1,0 +1,12 @@
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+
+  position: absolute;
+  cursor: pointer;
+  z-index: -1;
+}
