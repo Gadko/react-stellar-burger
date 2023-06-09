@@ -1,10 +1,9 @@
 import PropTypes from "prop-types";
 import styles from "./IngredientDetails.module.css";
-import Modal from "../Modal/Modal";
-import done from "../../images/done.png";
+import PropsValidation from "../PropsValidation/PropsValidation";
 
 function IngredientDetails(props) {
-  if (props.modalData === undefined || props.active === undefined) {
+  if (props.modalData === undefined) {
     return <div></div>;
   }
 
@@ -74,9 +73,8 @@ function IngredientDetails(props) {
     </>
   );
 }
-
 IngredientDetails.propTypes = {
-  modalData: PropTypes.object.isRequired
-};
+  modalData: PropTypes.shape(PropsValidation),
+}
 
 export default IngredientDetails;

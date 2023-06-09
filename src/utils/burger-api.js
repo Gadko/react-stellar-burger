@@ -12,3 +12,17 @@ export default function getIngredients() {
       .then((res) => checkError(res))
       .catch((e) => console.log(e))
   }
+
+export function postInfoOrder(id) {
+  return fetch(`https://norma.nomoreparties.space/api/orders`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ 
+      "ingredients": id
+  } )
+  })
+    .then((res) => checkError(res))
+    .catch((e) => console.log(e))
+}

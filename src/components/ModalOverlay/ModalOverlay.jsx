@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
+import { useContext } from 'react';
 import styles from "./ModalOverlay.module.css";
+import { ModalContext } from "../../service/appContext";
 
 
 function ModalOverlay({ active, setActive, children }) {
@@ -10,8 +12,5 @@ function ModalOverlay({ active, setActive, children }) {
   );
 }
 
-ModalOverlay.propTypes = {
-  setActive: PropTypes.func.isRequired,
-};
 
 export default ModalOverlay;

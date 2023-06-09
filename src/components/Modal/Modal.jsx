@@ -1,9 +1,9 @@
 
 import PropTypes from "prop-types";
 import styles from "./Modal.module.css";
-import { useEffect } from 'react';
 import ReactDOM from 'react-dom'
 import ModalOverlay from "../ModalOverlay/ModalOverlay";
+import { useEffect} from 'react';
 
 const modalRoot = document.getElementById("react-modals");
 
@@ -17,7 +17,7 @@ function Modal({active, setActive, children}) {
   
     document.addEventListener('keydown', handleEscapeKey)
     return () => document.removeEventListener('keydown', handleEscapeKey)
-  }, [])
+  })
 
 
 
@@ -28,15 +28,17 @@ function Modal({active, setActive, children}) {
             <button type="button" className={styles.close} onClick={() => setActive(false)}></button>
             {children}
           </div>
-          <ModalOverlay setActive={setActive} />
+          <ModalOverlay setActive={setActive}/>
       </div>
     </>
   ), modalRoot);
 }
 
-Modal.propTypes = {
-  active: PropTypes.bool.isRequired,
-  setActive: PropTypes.func.isRequired,
+
+Modal.propTypes = { 
+  active: PropTypes.bool.isRequired, 
+  setActive: PropTypes.func.isRequired, 
+  children: PropTypes.node.isRequired 
 };
 
 export default Modal;

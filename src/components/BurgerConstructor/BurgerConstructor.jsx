@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { useContext } from "react";
 import styles from "./BurgerConstructor.module.css";
 import { ConstructorElement } from "@ya.praktikum/react-developer-burger-ui-components";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
@@ -6,17 +7,23 @@ import {
   Button,
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import PropsValidation from "../PropsValidation/PropsValidation";
+import { ModalContext } from "../../service/appContext";
+import { postInfoOrder } from "../../utils/burger-api";
+
+export const masId = [];
+export const answer = [];
 
 function BurgerPart(props) {
+  const value = useContext(ModalContext);
+
   const mas = [];
-  for (let i = 0; i < props.data.length; i++) {
+  for (let i = 0; i < value.api.ingredients.length; i++) {
     if (
-      props.part.type.includes(props.data[i].type) &&
-      props.data[i].count > 0
+      props.part.type.includes(value.api.ingredients[i].type) &&
+      value.api.ingredients[i].count > 0
     ) {
-      for (let j = 0; j < props.data[i].count; j++) {
-        const key = props.part.key + props.data[i]._id + j;
+      for (let j = 0; j < value.api.ingredients[i].count; j++) {
+        const key = props.part.key + value.api.ingredients[i]._id + j;
 
         mas.push(
           <div key={key} className={styles.content}>
@@ -29,11 +36,11 @@ function BurgerPart(props) {
               key={key}
               type={props.part.key}
               isLocked={props.part.isLocked}
-              text={props.data[i].name + props.part.appendix}
-              price={props.data[i].price}
-              thumbnail={props.data[i].image}
+              text={value.api.ingredients[i].name + props.part.appendix}
+              price={value.api.ingredients[i].price}
+              thumbnail={value.api.ingredients[i].image}
               handleClose={() => {
-                props.removeIngredient(props.data[i]._id);
+                value.removeIngredient(value.api.ingredients[i]._id);
               }}
             />
           </div>
@@ -47,37 +54,38 @@ function BurgerPart(props) {
   return mas;
 }
 
-BurgerPart.propTypes = {
-  data: PropTypes.arrayOf(PropsValidation),
-  removeIngredient: PropTypes.func.isRequired,
-};
 
-function Sum(props) {
-  if (props.data === undefined) {
+BurgerPart.propTypes = { 
+  part: PropTypes.shape({ 
+    key: PropTypes.string.isRequired, 
+    type: PropTypes.string.isRequired, 
+    isLocked: PropTypes.bool, 
+    appendix: PropTypes.string, 
+    onlyOne: PropTypes.bool, 
+  }).isRequired, };
+
+function Sum() {
+  const value = useContext(ModalContext);
+
+  if (value.api.ingredients === undefined) {
     return 0;
   }
   let sum = 0;
-  for (let i = 0; i < props.data.length; i++) {
-    if (props.data[i].count !== undefined) {
-      sum +=
-        props.data[i].price *
-        props.data[i].count;
+  for (let i = 0; i < value.api.ingredients.length; i++) {
+    if (value.api.ingredients[i].count !== undefined) {
+      sum += value.api.ingredients[i].price * value.api.ingredients[i].count;
     }
   }
   return sum;
 }
 
-Sum.propTypes = {
-  data: PropTypes.arrayOf(PropsValidation),
-};
-
 function BurgerConstructor(props) {
+  const value = useContext(ModalContext);
+
   return (
     <>
       <div className={`${styles.container__conetnt}`}>
         <BurgerPart
-          data={props.data}
-          removeIngredient={props.removeIngredient}
           part={{
             type: ["bun"],
             onlyOne: true,
@@ -88,8 +96,6 @@ function BurgerConstructor(props) {
         />
         <div className={`${styles.container} custom-scroll`}>
           <BurgerPart
-            data={props.data}
-            removeIngredient={props.removeIngredient}
             part={{
               type: ["main", "sauce"],
               onlyOne: false,
@@ -100,8 +106,6 @@ function BurgerConstructor(props) {
           />
         </div>
         <BurgerPart
-          data={props.data}
-          removeIngredient={props.removeIngredient}
           part={{
             type: ["bun"],
             onlyOne: true,
@@ -118,7 +122,15 @@ function BurgerConstructor(props) {
         </div>
         <Button
           onClick={() => {
-            props.setActive(true);
+            value.api.ingredients.forEach((item) => {
+              masId.push(item._id);
+            });
+            postInfoOrder(masId).then((res) => {
+              answer.push(res.order.number);
+            });
+            setTimeout(() => {
+              value.setModalOrderActive(true);
+            }, 400);
           }}
           htmlType="button"
           type="primary"
@@ -131,11 +143,5 @@ function BurgerConstructor(props) {
     </>
   );
 }
-
-BurgerConstructor.propTypes = {
-  setActive: PropTypes.func.isRequired,
-  data: PropTypes.arrayOf(PropsValidation),
-  removeIngredient: PropTypes.func.isRequired,
-};
 
 export default BurgerConstructor;

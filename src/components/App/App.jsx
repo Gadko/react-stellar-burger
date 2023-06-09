@@ -1,6 +1,5 @@
-import PropTypes from "prop-types";
 import styles from "./App.module.css";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import AppHeader from "../Header/AppHeader";
 import Title from "../Title/Title";
 import Tab from "../Tab/Tabs";
@@ -10,18 +9,21 @@ import OrderDetails from "../OrderDetails/OrderDetails";
 import IngredientDetails from "../IngredientDetails/IngredientDetails";
 import getIngredients from "../../utils/burger-api";
 import Modal from "../Modal/Modal";
+import {
+  ModalContext
+} from "../../service/appContext";
+
+
 
 function App() {
+  
   const [api, setApi] = useState({
     error: null,
     ingredients: [],
   });
 
-  
-
   useEffect(() => {
-    getIngredients()
-      .then(
+    getIngredients().then(
       (res) => {
         let isBun = false;
         res.data.forEach((e) => {
@@ -44,7 +46,7 @@ function App() {
           error,
         });
       }
-    );;
+    );
   }, []);
 
   function isBunSelected() {
@@ -70,44 +72,44 @@ function App() {
         break;
       }
     }
-    let newmap = [...api.ingredients];
-    newmap[index].count += 1;
+    let apiIngredients = [...api.ingredients];
+    apiIngredients[index].count += 1;
 
-    setApi({ ...api, ingredients: newmap });
+    setApi({ ...api, ingredients: apiIngredients });
   }
 
-  function addIngredients(_ids) {
-    let indexes = [];
-    let isBuns = false;
-    let newmap = [...api.ingredients];
-    if (api.ingredients.length <= 0) {
-      return;
-    }
-    for (let i = 0; i < api.ingredients.length; i++) {
-      for (let j = 0; j < _ids.length; j++) {
-        if (
-          api.ingredients[i]._id === _ids[j] &&
-          api.ingredients[i].type === "bun" &&
-          (isBunSelected() || isBuns)
-        ) {
-          continue;
-        } else if (api.ingredients[i]._id === _ids[j]) {
-          if (api.ingredients[i].type === "bun") {
-            isBuns = true;
-          }
-          indexes.push(i);
-        }
-      }
-      indexes.forEach((e) => {
-        newmap[e].count += 1;
-      });
-    }
-    setApi({ ...api, ingredients: newmap });
-  }
+  // function addIngredients(_ids) {
+  //   let indexes = [];
+  //   let isBuns = false;
+  //   let apiIngredients = [...api.ingredients];
+  //   if (api.ingredients.length <= 0) {
+  //     return;
+  //   }
+  //   for (let i = 0; i < api.ingredients.length; i++) {
+  //     for (let j = 0; j < _ids.length; j++) {
+  //       if (
+  //         api.ingredients[i]._id === _ids[j] &&
+  //         api.ingredients[i].type === "bun" &&
+  //         (isBunSelected() || isBuns)
+  //       ) {
+  //         continue;
+  //       } else if (api.ingredients[i]._id === _ids[j]) {
+  //         if (api.ingredients[i].type === "bun") {
+  //           isBuns = true;
+  //         }
+  //         indexes.push(i);
+  //       }
+  //     }
+  //     indexes.forEach((e) => {
+  //       apiIngredients[e].count += 1;
+  //     });
+  //   }
+  //   setApi({ ...api, ingredients: apiIngredients });
+  // }
 
   function removeIngredient(_id) {
     let index = 0;
-    let newmap = [...api.ingredients];
+    let apiIngredients = [...api.ingredients];
 
     for (let i = 0; i < api.ingredients.length; i++) {
       if (api.ingredients[i]._id === _id) {
@@ -116,62 +118,74 @@ function App() {
       }
     }
 
-    if (newmap[index].count === 0) {
+    if (apiIngredients[index].count === 0) {
       return;
     }
 
-    newmap[index].count -= 1;
-    setApi({ ...api, ingredients: newmap });
+    apiIngredients[index].count -= 1;
+    setApi({ ...api, ingredients: apiIngredients });
   }
 
-  const [modalOrderActive, setModelOrderActive] = useState(false);
-  const [modalDetailsActive, setModelDetailsActive] = useState(false);
+  const [modalOrderActive, setModalOrderActive] = useState(false);
+  const [modalDetailsActive, setModalDetailsActive] = useState(false);
   const [modalData, setModalData] = useState({});
 
   function modalDetails(_id) {
     for (let i = 0; i < api.ingredients.length; i++) {
       if (api.ingredients[i]._id === _id) {
         setModalData(api.ingredients[i]);
-        setModelDetailsActive(true);
+        setModalDetailsActive(true);
         return;
       }
     }
   }
-
+ 
   return (
     <div className={styles.app}>
-      <AppHeader />
-      <div style={{ width: "1243px" }}>
-        <Title />
-        <div style={{ display: "flex", gap: "40px" }}>
-          <div style={{ width: "600px" }}>
-            <Tab />
-            <BurgerIngredients
-              setActiveDetails={modalDetails}
-              data={api.ingredients}
-              addIngredient={addIngredient}
-            />
-          </div>
-          <div style={{ width: "600px" }}>
-            <BurgerConstructor
-              data={api.ingredients}
-              setActive={setModelOrderActive}
-              removeIngredient={removeIngredient}
-            />
+      <ModalContext.Provider value={
+        {modalDetails,
+        addIngredient,
+        modalData,
+        modalOrderActive,
+        setModalOrderActive,
+        modalDetailsActive,
+        setModalDetailsActive,
+        setModalData,
+        api,
+        setApi,
+        removeIngredient
+        }
+      }>
+        <AppHeader />
+        <div style={{ width: "1243px" }}>
+          <Title />
+          <div style={{ display: "flex", gap: "40px" }}>
+            <div style={{ width: "600px" }}>
+              <Tab />
+              <BurgerIngredients/>
+            </div>
+            <div style={{ width: "600px" }}>
+              <BurgerConstructor
+                data={api.ingredients}
+                setActive={setModalOrderActive}
+                removeIngredient={removeIngredient}
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <OrderDetails active={modalOrderActive} setActive={setModelOrderActive} />
-      
-      <Modal setActive={setModelDetailsActive} active={modalDetailsActive}>
-      
-        <IngredientDetails
-          modalData={modalData}
-          data={api.ingredients}
-          active={modalDetailsActive}
+        <OrderDetails
+          active={modalOrderActive}
+          setActive={setModalOrderActive}
         />
-        
-      </Modal>
+
+        <Modal active={modalDetailsActive} setActive={setModalDetailsActive}>
+          <IngredientDetails
+          modalData={modalData}
+          active={modalDetailsActive}
+          setActive={setModalDetailsActive}
+          />
+        </Modal>
+      </ModalContext.Provider>
     </div>
   );
 }
